@@ -1,0 +1,144 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Brainstorming App</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" type="text/css" href="./css/style.css">
+  <link rel="stylesheet" type="text/css" href="./css/note.css">
+
+  <!-- <script src="./tensorflow.js"></script> -->
+  <script src="./webgazer.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div id="skywayUI" 　class="app-wrapper">
+    <p id=id-label>ID: <span id="my-id">Your ID</span></p>
+    <div class="channel-group">
+      <input id="channel-name" type="text" placeholder="キーワード" />
+      <button id="join">参加</button>
+    </div>
+
+    <label class="switch">
+      <input type="checkbox" id="videoToggle">
+    </label>
+
+    <p id="status">カメラ OFF</p>
+    <video id="local-video" muted playsinline style="display: none;"></video>
+
+    <div id="remote-media-area"></div>
+    <div id="notesContainer"></div>
+    
+
+    <button id="gazeTimeDisplay">自分の視線滞留時間の表示</button>
+    <button id="start">議論開始</button>
+
+
+  </div>
+
+  <div id="notesContainer"></div>
+  <button id="gazeTimeDisplay1">通信者１の視線滞留時間の表示</button>
+  <button id="gazeTimeDisplay2">通信者２の視線滞留時間の表示</button>
+
+  <div id="gazetime1-area">
+    <div class="gaze-time-element">あ, Gaze Time: 0</div>
+    <div class="gaze-time-element">い, Gaze Time: 0</div>
+    <div class="gaze-time-element">う, Gaze Time: 0</div>
+    <div class="gaze-time-element">え, Gaze Time: 0</div>
+    <div class="gaze-time-element">お, Gaze Time: 0</div>
+    <div class="gaze-time-element">か, Gaze Time: 0</div>
+  </div>
+  <div id="gazetime2-area">
+    <div class="gaze-time-element">あ, Gaze Time: 0</div>
+    <div class="gaze-time-element">い, Gaze Time: 0</div>
+    <div class="gaze-time-element">う, Gaze Time: 0</div>
+    <div class="gaze-time-element">え, Gaze Time: 0</div>
+    <div class="gaze-time-element">お, Gaze Time: 0</div>
+    <div class="gaze-time-element">か, Gaze Time: 0</div>
+  </div>
+
+
+  <label class="switch">
+    <input type="checkbox" id="videoToggle">
+  </label>
+
+  <script src="https://cdn.jsdelivr.net/npm/@skyway-sdk/room/dist/skyway_room-latest.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skyway-js"></script>
+  <script type="module" src="./js/note.js"></script>
+  <script type="module" src="main.js"></script>
+
+
+  <!-- Latest compiled JavaScript -->
+  <script src="./js/resize_canvas.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <canvas id="plotting_canvas" width="500" height="500" style="cursor:crosshair;"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert@2"></script>
+
+
+
+  <script src="./js/main.js"></script>
+  <script src="./js/calibration.js"></script>
+  <script src="./js/precision_calculation.js"></script>
+  <script src="./js/precision_store_points.js"></script>
+
+  <nav id="webgazerNavbar" class="navbar navbar-expand-lg navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <!-- The hamburger menu button -->
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#myNavbar">
+          <span class="navbar-toggler-icon">Menu</span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <!-- Accuracy -->
+          <li id="Accuracy"><a>Not yet Calibrated</a></li>
+          <li><a onclick="Restart()" href="#">Recalibrate</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Calibration points -->
+  <div class="calibrationDiv">
+    <input type="button" class="Calibration" id="Pt1"></input>
+    <input type="button" class="Calibration" id="Pt2"></input>
+    <input type="button" class="Calibration" id="Pt3"></input>
+    <input type="button" class="Calibration" id="Pt4"></input>
+    <input type="button" class="Calibration" id="Pt5"></input>
+    <input type="button" class="Calibration" id="Pt6"></input>
+    <input type="button" class="Calibration" id="Pt7"></input>
+    <input type="button" class="Calibration" id="Pt8"></input>
+    <input type="button" class="Calibration" id="Pt9"></input>
+  </div>
+
+  <!-- Modal -->
+  <div id="helpModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+          <img src="media/example/calibration.png" width="100%" height="100%" alt="webgazer demo instructions"></img>
+        </div>
+        <div class="modal-footer">
+          <button id="closeBtn" type="button" class="btn btn-default" data-bs-dismiss="modal">Close & load saved model
+          </button>
+          <button type="button" id='start_calibration' class="btn btn-primary" data-bs-dismiss="modal"
+            onclick="Restart()">Calibrate</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+</body>
+
+</html>

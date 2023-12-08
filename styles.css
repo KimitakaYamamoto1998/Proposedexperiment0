@@ -1,26 +1,66 @@
 #skywayUI{
     position: absolute;
     z-index: 2;
+    text-align: center;
+    top: 40px;
+
+}
+.audio-element{
+    display: none;
+}
+
+.calibrationDiv{
+    z-index: 2;
+}
+
+#webgazerGazeDot {
+    border-radius: 50%; /* 円形にするための border-radius 設定 */
+    top: 0 !important;
+    left: 0 !important;
+    background: red !important;
+    position: fixed;
+    z-index: 1 !important;
+    opacity: 0.7;
+    /*transform: translate(-50%, -50%); /* 追加 */
 }
 
 .video-container:nth-child(1) {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    width: 20%; /* 20%のウィンドウ幅に設定 */
+    position: fixed !important;
+    top: 10px !important;
+    right: 10px !important;
+    width: 20% !important; /* 20%のウィンドウ幅に設定 */
 }
 
 .video-container:nth-child(2) {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    width: 20%; /* 20%のウィンドウ幅に設定 */
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    width: 20% !important; /* 20%のウィンドウ幅に設定 */
 }
 
-.video-element {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
+.video-element.speaker-1 {
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    width: 20% !important; /* 20%のウィンドウ幅に設定 */
+    border-radius: 10px !important;
+}
+
+.video-element.speaker-2 {
+    position: fixed !important;
+    top: 10px !important;
+    right: 10px !important;
+    width: 20% !important; /* 20%のウィンドウ幅に設定 */
+    border-radius: 10px !important;
+
+}
+
+.on {
+    background-color: #4bd865;
+}
+
+.off {
+    background-color: #dddddd;
 }
 
 #local-video {
@@ -122,4 +162,52 @@ body {
 
 .switch:has(:checked)::after {
     left: 40px;
+}
+
+
+/*カーソル */
+.cursor-element.speaker-1 {
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid red; /* ここで三角形の色を設定 */
+    transform:rotate(-45deg);
+    position: fixed;
+    pointer-events: none; /* カーソルが他の要素を選択しないようにする */
+}
+
+.cursor-element.speaker-2 {
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid blue; /* ここで三角形の色を設定 */
+    transform:rotate(-45deg);
+    position: fixed;
+    pointer-events: none; /* カーソルが他の要素を選択しないようにする */
+}
+
+#gazetime1-area{
+    position: absolute;
+    left: 10px !important;
+    top: 265px !important;
+}
+
+#gazetime2-area{
+    position: absolute;
+    right: 10px !important;
+    top: 265px !important;
+}
+
+#gazeTimeDisplay1{
+    position: absolute;
+    left: 10px !important;
+    top: 230px !important;
+    width: 250px;
+    z-index: 2;
+}
+
+#gazeTimeDisplay2{
+    position: absolute;
+    right: 10px !important;
+    top: 230px !important;
+    width: 250px;
+    z-index: 2;
 }

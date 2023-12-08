@@ -1,5 +1,7 @@
 body {
     min-width:600px!important;
+    overflow: hidden; /* スクロールを無効にする */
+    
 }
 
 button {
@@ -12,8 +14,9 @@ button {
  * webgazer.js sets defaults for: display, position, top, left, width, height
  */
 }
+
 #webgazerVideoContainer {
-    display: block !important; 
+    display: none !important; 
     position: fixed !important;
     top: 0px !important;
     left: 0px !important;
