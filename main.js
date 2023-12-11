@@ -119,92 +119,106 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 最初にHTMLに記述された6つのgaze-time-elementを取得
     const initialGazeTimeElements = document.querySelectorAll('#gazetime1-area .gaze-time-element');
 
+    let isSubscribing = false;
+
     joinButton.onclick = async () => {
-        if (channelNameInput.value === '') return;
+        if (channelNameInput.value === '' || isSubscribing) return;
 
-        const context = await SkyWayContext.Create(token);
-        const channel = await SkyWayRoom.FindOrCreate(context, {
-            type: 'p2p',
-            name: channelNameInput.value,
-        });
-        const me = await channel.join();
+        isSubscribing = true;
 
-        myId.textContent = me.id;
+        try {
+            const context = await SkyWayContext.Create(token);
+            const channel = await SkyWayRoom.FindOrCreate(context, {
+                type: 'p2p',
+                name: channelNameInput.value,
+            });
+            const me = await channel.join();
 
-        await me.publish(audio);
-        await me.publish(video);
-        await me.publish(textdata);
+            myId.textContent = me.id;
 
-        const subscribeAndAttach = async (publication) => {
-            if (publication.publisher.id === me.id) {
-                return;
-            }
+            await me.publish(audio);
+            await me.publish(video);
+            await me.publish(textdata);
 
-            const { stream } = await me.subscribe(publication.id);
+            const subscribeAndAttach = async (publication) => {
+                if (publication.publisher.id === me.id) {
+                    return;
+                }
 
-            switch (stream.contentType) {
-                case 'video':
-                    {
-                        speakerCount++;
+                const { stream } = await me.subscribe(publication.id);
 
-                        const videoContainer = document.createElement('div');
+                switch (stream.contentType) {
+                    case 'video':
+                        {
+                            speakerCount++;
 
-                        videoContainer.id = `video-container-${speakerCount}`;
-                        const elm = document.createElement('video');
-                        elm.playsInline = true;
-                        elm.autoplay = true;
-                        elm.classList.add('video-element', `speaker-${speakerCount}`);
-                        stream.attach(elm);
+                            const videoContainer = document.createElement('div');
 
-                        videoContainer.appendChild(elm);
-                        remoteMediaArea.appendChild(videoContainer);
+                            videoContainer.id = `video-container-${speakerCount}`;
+                            const elm = document.createElement('video');
+                            elm.playsInline = true;
+                            elm.autoplay = true;
+                            elm.classList.add('video-element', `speaker-${speakerCount}`);
+                            stream.attach(elm);
 
-                        videoContainer.classList.add(`video-container:nth-child(${speakerCount})`);
-                    }
-                    break;
-                case 'audio':
-                    {
-                        const elm = document.createElement('audio');
-                        elm.controls = true;
-                        elm.autoplay = true;
-                        elm.classList.add('audio-element');
-                        stream.attach(elm);
-                        remoteMediaArea.appendChild(elm);
-                    }
-                    break;
-                case 'data':
-                    {
-                        const subscriberIndex = speakerCount - 1;
+                            videoContainer.appendChild(elm);
+                            remoteMediaArea.appendChild(videoContainer);
 
-                        dataStreamSubscribers[subscriberIndex] = stream.onData;
+                            videoContainer.classList.add(`video-container:nth-child(${speakerCount})`);
+                        }
+                        break;
+                    case 'audio':
+                        {
+                            const elm = document.createElement('audio');
+                            elm.controls = true;
+                            elm.autoplay = true;
+                            elm.classList.add('audio-element');
+                            stream.attach(elm);
+                            remoteMediaArea.appendChild(elm);
+                        }
+                        break;
+                    case 'data':
+                        {
+                            const subscriberIndex = speakerCount;
 
-                        dataStreamSubscribers[subscriberIndex].add((mousedata) => {
-                            mousedata.notesData.forEach((noteData) => {
-                                const note = document.querySelector(`.note[data-note-id="${noteData.noteId}"]`);
-                                if (note) {
-                                    note.style.left = noteData.left;
-                                    note.style.top = noteData.top;
-                                }
+                            dataStreamSubscribers[subscriberIndex] = stream.onData;
+
+                            dataStreamSubscribers[subscriberIndex].add((mousedata) => {
+                                console.log("Received data:", mousedata, subscriberIndex);
+
+                                mousedata.notesData.forEach((noteData) => {
+                                    const note = document.querySelector(`.note[data-note-id="${noteData.noteId}"]`);
+                                    if (note) {
+                                        note.style.left = noteData.left;
+                                        note.style.top = noteData.top;
+                                    }
+                                });
+
+                                const gazetimeAreaId = `gazetime${subscriberIndex}-area`;
+
+                                // 最初に取得したgaze-time-elementを更新
+                                const gazetimeElements = document.querySelectorAll(`#${gazetimeAreaId} .gaze-time-element`);
+                                gazetimeElements.forEach((element, index) => {
+                                    const noteData = mousedata.notesData[index];
+                                    element.textContent = `${noteData.noteId}, text: ${noteData.notetext}, Gaze Time: ${noteData.gazeTime}`;
+                                });
                             });
 
-                            const gazetimeAreaId = `gazetime${subscriberIndex + 1}-area`;
+                        }
+                        break;
+                }
+            };
 
-                            // 最初に取得したgaze-time-elementを更新
-                            const gazetimeElements = document.querySelectorAll(`#${gazetimeAreaId} .gaze-time-element`);
-                            gazetimeElements.forEach((element, index) => {
-                                const noteData = mousedata.notesData[index];
-                                element.textContent = `${noteData.noteId}, text: ${noteData.notetext}, Gaze Time: ${noteData.gazeTime}`;
-                            });
-                        });
-
-                        
-
-                    }
-                    break;
+            for (const publication of channel.publications) {
+                await subscribeAndAttach(publication);
             }
-        };
 
-        channel.publications.forEach((publication) => subscribeAndAttach(publication));
-        channel.onStreamPublished.add((e) => subscribeAndAttach(e.publication));
+            channel.onStreamPublished.add((e) => subscribeAndAttach(e.publication));
+
+        } catch (error) {
+            console.error("Error joining channel:", error);
+        } finally {
+            isSubscribing = false;
+        }
     };
 });
