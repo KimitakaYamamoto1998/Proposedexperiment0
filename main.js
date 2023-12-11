@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                         dataStreamSubscribers[subscriberIndex] = stream.onData;
 
-                        dataStreamSubscribers[subscriberIndex].add((mousedata) => {
+                        dataStreamSubscribers[0].add((mousedata) => {
                             mousedata.notesData.forEach((noteData) => {
                                 const note = document.querySelector(`.note[data-note-id="${noteData.noteId}"]`);
                                 if (note) {
@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 }
                             });
 
-                            const gazetimeAreaId = `gazetime${subscriberIndex + 1}-area`;
+                            const gazetimeAreaId = `gazetime1-area`;
 
                             // 最初に取得したgaze-time-elementを更新
                             const gazetimeElements = document.querySelectorAll(`#${gazetimeAreaId} .gaze-time-element`);
@@ -196,6 +196,26 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 element.textContent = `${noteData.noteId}, text: ${noteData.notetext}, Gaze Time: ${noteData.gazeTime}`;
                             });
                         });
+
+                        dataStreamSubscribers[1].add((mousedata) => {
+                            mousedata.notesData.forEach((noteData) => {
+                                const note = document.querySelector(`.note[data-note-id="${noteData.noteId}"]`);
+                                if (note) {
+                                    note.style.left = noteData.left;
+                                    note.style.top = noteData.top;
+                                }
+                            });
+
+                            const gazetimeAreaId = `gazetime2-area`;
+
+                            // 最初に取得したgaze-time-elementを更新
+                            const gazetimeElements = document.querySelectorAll(`#${gazetimeAreaId} .gaze-time-element`);
+                            gazetimeElements.forEach((element, index) => {
+                                const noteData = mousedata.notesData[index];
+                                element.textContent = `${noteData.noteId}, text: ${noteData.notetext}, Gaze Time: ${noteData.gazeTime}`;
+                            });
+                        });
+
 
                     }
                     break;
