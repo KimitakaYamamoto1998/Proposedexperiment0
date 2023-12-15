@@ -291,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const gapX = 20;
     const gapY = 20;
 
-    const initialTexts = ["頭につけて遊ぶやつ", "針金人間を作る", "真ん中へこましてブーメラン", "ものが隙間に挟まったときに，出すやつ？", "でかいシャボン玉作る時に曲げて使う", "工作などで針金が必要な時に分解する"];
+    const initialTexts = ["分解して工作に使う", "仮装に使う", "はしご", "方向転換機", "冷蔵庫などの裏に落ちたものを取る道具", "針金"];
 
     for (let i = 0; i < 6; i++) {
         const newNote = createStickyNote();
